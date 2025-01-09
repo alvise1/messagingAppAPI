@@ -60,6 +60,10 @@ public class AppUser implements UserDetails {
         this.createdAt = LocalDateTime.now();
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getUsername() {
         return username;
     }

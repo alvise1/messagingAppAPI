@@ -25,6 +25,10 @@ public class Chat {
     @OneToMany(mappedBy = "chat")
     private Set<UserChat> participants = new HashSet<>();    // List of participants in chat
 
+    public Long getId() {
+        return id;
+    }
+
     public void setGroup(boolean isGroup) {
         this.isGroup = isGroup;
         if (!isGroup) {

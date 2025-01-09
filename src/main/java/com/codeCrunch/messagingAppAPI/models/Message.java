@@ -44,6 +44,10 @@ public class Message {
         this.timestamp = LocalDateTime.now();
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Chat getChat() {
         return chat;
     }
