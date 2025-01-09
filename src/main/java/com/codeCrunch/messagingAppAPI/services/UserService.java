@@ -2,6 +2,7 @@ package com.codeCrunch.messagingAppAPI.services;
 
 import com.codeCrunch.messagingAppAPI.models.AppUser;
 import com.codeCrunch.messagingAppAPI.repositories.AppUserRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,19 +27,6 @@ public class UserService {
      */
     public AppUser registerUser(AppUser user) {
         // Hash the password before saving
-        String hashedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(hashedPassword);
-
-        return appUserRepository.save(user);
-    }
-
-    /**
-     * Create an admin user (ROLE.ADMIN).
-     */
-    public AppUser createAdminUser(AppUser user) {
-        user.setRole(AppUser.Role.ADMIN);
-
-        // Hash the password
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
 
@@ -94,14 +82,36 @@ public class UserService {
         }
     }
 
+    // ========== Admin-Only Operations ==========
+
+    /**
+     * Create an admin user (ROLE.ADMIN).
+     */
+    public void createAdminUser(AppUser user) {
+        user.setRole(AppUser.Role.ADMIN);
+
+        // Hash the password
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
+
+        appUserRepository.save(user);
+    }
+
+    /**
+     * Check if an admin user with a specific email already exists.
+     */
+    public boolean adminExistsByEmail(String email) {
+        return appUserRepository.findByEmail(email)
+                .filter(u -> u.getRole() == AppUser.Role.ADMIN)
+                .isPresent();
+    }
+
     /**
      * Get all users.
      */
     public List<AppUser> getAllUsers() {
         return appUserRepository.findAll();
     }
-
-    // ========== Admin-Only Operations ==========
 
     /**
      * Lock a user's account (isAccountNonLocked() becomes false).

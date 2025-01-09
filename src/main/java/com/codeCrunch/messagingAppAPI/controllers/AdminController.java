@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/admin")
 @PreAuthorize("hasRole('ADMIN')")
@@ -16,6 +18,15 @@ public class AdminController {
 
     public AdminController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        List<AppUser> users = userService.getAllUsers();
+        List<UserResponseDTO> dtoList = users.stream()
+                .map(this::mapToDTO)
+                .toList();
+        return ResponseEntity.ok(dtoList);
     }
 
     /**

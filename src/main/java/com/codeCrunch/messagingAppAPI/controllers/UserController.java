@@ -24,12 +24,6 @@ public class UserController {
         return ResponseEntity.ok(mapToDTO(registeredUser));
     }
 
-    @PostMapping("/register-admin")
-    public ResponseEntity<UserResponseDTO> registerAdmin(@RequestBody AppUser user) {
-        AppUser adminUser = userService.createAdminUser(user);
-        return ResponseEntity.ok(mapToDTO(adminUser));
-    }
-
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody AppUser user) {
         // Returns a mock token for now
@@ -47,15 +41,6 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@RequestParam Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.ok("User deleted successfully");
-    }
-
-    @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-        List<AppUser> users = userService.getAllUsers();
-        List<UserResponseDTO> dtoList = users.stream()
-                .map(this::mapToDTO)
-                .toList();
-        return ResponseEntity.ok(dtoList);
     }
 
     private UserResponseDTO mapToDTO(AppUser user) {
