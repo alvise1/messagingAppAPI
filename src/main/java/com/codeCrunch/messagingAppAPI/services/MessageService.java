@@ -2,6 +2,7 @@ package com.codeCrunch.messagingAppAPI.services;
 
 import com.codeCrunch.messagingAppAPI.models.*;
 import com.codeCrunch.messagingAppAPI.repositories.*;
+import com.codeCrunch.messagingAppAPI.utility.SanitizerUtils;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -47,6 +48,13 @@ public class MessageService {
 
         message.setStatus(Message.MessageStatus.SENT);
 
+        String sanitizedContent = SanitizerUtils.sanitizeToPlainText(message.getContent());
+        message.setContent(sanitizedContent);
+
+        if (message.getContent() == null || message.getContent().isEmpty()) {
+            message.setContent("(no text)");
+        }
+
         Message savedMessage = messageRepository.save(message);
 
         chat.setLastMessage(savedMessage);
@@ -76,5 +84,12 @@ public class MessageService {
         }
 
         messageRepository.deleteById(messageId);
+    }
+
+    public Message updateMessageStatus(Long messageId, Message.MessageStatus newStatus) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found"));
+        message.setStatus(newStatus);
+        return messageRepository.save(message);
     }
 }

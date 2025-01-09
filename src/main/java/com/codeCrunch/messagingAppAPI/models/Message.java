@@ -23,6 +23,7 @@ public class Message {
     @Size(max = 2048)    // We'll limit single text content for now
     private String content;
 
+    // Right now, limit is 1 attachment per message
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "attachment_id", referencedColumnName = "id")
     private Attachment attachment;

@@ -4,20 +4,11 @@ import com.codeCrunch.messagingAppAPI.models.Friendship.FriendshipStatus;
 import java.time.LocalDateTime;
 
 public class FriendshipDTO {
-    private Long id;
     private Long user1Id;
     private Long user2Id;
     private FriendshipStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Long getUser1Id() {
         return user1Id;
@@ -45,10 +36,6 @@ public class FriendshipDTO {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public LocalDateTime getUpdatedAt() {

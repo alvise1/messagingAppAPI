@@ -101,11 +101,9 @@ public class FriendshipController {
      */
     private FriendshipDTO mapToDTO(Friendship friendship) {
         FriendshipDTO dto = new FriendshipDTO();
-        dto.setId(friendship.getId());
         dto.setUser1Id(friendship.getUser1().getId());
         dto.setUser2Id(friendship.getUser2().getId());
         dto.setStatus(friendship.getStatus());
-        dto.setCreatedAt(friendship.getCreatedAt());
         dto.setUpdatedAt(friendship.getUpdatedAt());
         return dto;
     }

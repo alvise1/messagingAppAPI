@@ -4,30 +4,33 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.codeCrunch.messagingAppAPI.models.*;
-import com.codeCrunch.messagingAppAPI.repositories.*;
+import com.codeCrunch.messagingAppAPI.repositories.AttachmentRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import com.codeCrunch.messagingAppAPI.repositories.MessageRepository;
 
 @Service
 public class AttachmentService {
 
     private final AttachmentRepository attachmentRepository;
+    private final MessageRepository messageRepository;
     private final AmazonS3 amazonS3;
 
     // Application properties
     @Value("${aws.s3.bucket.name}")
     private String bucketName;
 
-    public AttachmentService(AttachmentRepository attachmentRepository, AmazonS3 amazonS3) {
+    public AttachmentService(AttachmentRepository attachmentRepository, MessageRepository messageRepository, AmazonS3 amazonS3) {
         this.attachmentRepository = attachmentRepository;
+        this.messageRepository = messageRepository;
         this.amazonS3 = amazonS3;
     }
 
-    public Attachment uploadAttachment(MultipartFile file) throws IOException {
+    public Attachment uploadAttachment(MultipartFile file, Long messageId) throws IOException {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File cannot be empty");
         }
@@ -39,10 +42,14 @@ public class AttachmentService {
 
         String fileUrl = amazonS3.getUrl(bucketName, uniqueFileName).toString();
 
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found!"));
+
         Attachment attachment = new Attachment();
         attachment.setFileUrl(fileUrl);
         attachment.setFileType(determineFileType(file.getContentType()));
         attachment.setFileSize((int) file.getSize());
+        attachment.setMessage(message);
 
         return attachmentRepository.save(attachment);
     }

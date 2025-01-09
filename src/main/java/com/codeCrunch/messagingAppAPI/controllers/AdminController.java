@@ -101,19 +101,16 @@ public class AdminController {
         return ResponseEntity.ok(mapToDTO(user));
     }
 
-    // Maps AppUser to UserResponseDTO
     private UserResponseDTO mapToDTO(AppUser user) {
         if (user == null) return null;
 
         UserResponseDTO dto = new UserResponseDTO();
-        dto.setId(user.getId());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setBio(user.getBio());
         dto.setProfilePic(user.getProfilePic());
         dto.setStatus(user.getStatus());
         dto.setRole(user.getRole().name());
-        dto.setCreatedAt(user.getCreatedAt());
         dto.setUpdatedAt(user.getUpdatedAt());
         return dto;
     }
