@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -29,12 +30,12 @@ public class AppUser implements UserDetails {
 
     @Column(nullable = false)
     @NotBlank(message = "Password is required!")
-    @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters long")
+    @Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters long")
     private String password;
 
     private String bio;
 
-    // Holds URL for profile pic
+    // Holds the URL for the profile pic
     private String profilePic;
 
     private String status;
@@ -53,13 +54,20 @@ public class AppUser implements UserDetails {
     }
 
     @PrePersist
-    public void setDefaults() {
+    public void onCreate() {
         if (this.role == null) {
             this.role = Role.USER;
         }
         this.createdAt = LocalDateTime.now();
+        this.updatedAt = this.createdAt;
     }
 
+    @PreUpdate
+    public void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -72,10 +80,12 @@ public class AppUser implements UserDetails {
         this.username = username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    // Hash before setting
     public void setPassword(String password) {
         this.password = password;
     }
@@ -120,33 +130,25 @@ public class AppUser implements UserDetails {
         this.role = role;
     }
 
-    // Automatically set created and updated using JPA
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    // Spring Security Defaults
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    // =============== Spring Security fields & methods ===============
+
     private boolean accountExpired = false;
     private boolean accountLocked = false;
     private boolean credentialsExpired = false;
     private boolean enabled = true;
 
-    // Will need this for Spring Authentication
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));

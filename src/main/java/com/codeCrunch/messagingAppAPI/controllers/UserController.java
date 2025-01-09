@@ -1,8 +1,11 @@
 package com.codeCrunch.messagingAppAPI.controllers;
 
+import com.codeCrunch.messagingAppAPI.dto.UserResponseDTO;
 import com.codeCrunch.messagingAppAPI.models.AppUser;
+import com.codeCrunch.messagingAppAPI.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -16,21 +19,28 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AppUser> registerUser(@RequestBody AppUser user) {
+    public ResponseEntity<UserResponseDTO> registerUser(@RequestBody AppUser user) {
         AppUser registeredUser = userService.registerUser(user);
-        return ResponseEntity.ok(registeredUser);
+        return ResponseEntity.ok(mapToDTO(registeredUser));
+    }
+
+    @PostMapping("/register-admin")
+    public ResponseEntity<UserResponseDTO> registerAdmin(@RequestBody AppUser user) {
+        AppUser adminUser = userService.createAdminUser(user);
+        return ResponseEntity.ok(mapToDTO(adminUser));
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody AppUser user) {
+        // Returns a mock token for now
         String token = userService.loginUser(user);
         return ResponseEntity.ok(token);
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<AppUser> updateUserProfile(@RequestBody AppUser user) {
+    public ResponseEntity<UserResponseDTO> updateUserProfile(@RequestBody AppUser user) {
         AppUser updatedUser = userService.updateUserProfile(user);
-        return ResponseEntity.ok(updatedUser);
+        return ResponseEntity.ok(mapToDTO(updatedUser));
     }
 
     @DeleteMapping
@@ -40,8 +50,25 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AppUser>> getAllUsers() {
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         List<AppUser> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+        List<UserResponseDTO> dtoList = users.stream()
+                .map(this::mapToDTO)
+                .toList();
+        return ResponseEntity.ok(dtoList);
+    }
+
+    private UserResponseDTO mapToDTO(AppUser user) {
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setBio(user.getBio());
+        dto.setProfilePic(user.getProfilePic());
+        dto.setStatus(user.getStatus());
+        dto.setRole(user.getRole().name());
+        dto.setCreatedAt(user.getCreatedAt());
+        dto.setUpdatedAt(user.getUpdatedAt());
+        return dto;
     }
 }

@@ -74,6 +74,9 @@ public class Message {
 
     public void setAttachment(Attachment attachment) {
         this.attachment = attachment;
+        if (attachment != null) {
+            attachment.setMessage(this);
+        }
     }
 
     public Attachment getAttachment() {

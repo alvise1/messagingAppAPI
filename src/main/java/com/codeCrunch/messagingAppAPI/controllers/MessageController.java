@@ -1,6 +1,7 @@
 package com.codeCrunch.messagingAppAPI.controllers;
 
 import com.codeCrunch.messagingAppAPI.models.Message;
+import com.codeCrunch.messagingAppAPI.services.MessageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

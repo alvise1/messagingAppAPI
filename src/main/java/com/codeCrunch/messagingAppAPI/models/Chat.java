@@ -11,7 +11,6 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // How will this value be set?
     private boolean isGroup;
 
     private String groupName;   //Only for group chats
@@ -22,8 +21,9 @@ public class Chat {
     @ManyToOne
     private Message lastMessage;
 
-    @OneToMany(mappedBy = "chat")
-    private Set<UserChat> participants = new HashSet<>();    // List of participants in chat
+    // List of participants in chat
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserChat> participants = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -89,5 +89,9 @@ public class Chat {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         validateGroupChat();
+    }
+
+    public Message getLastMessage() {
+        return lastMessage;
     }
 }
