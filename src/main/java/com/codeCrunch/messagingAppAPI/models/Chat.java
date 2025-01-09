@@ -27,6 +27,9 @@ public class Chat {
 
     public void setGroup(boolean isGroup) {
         this.isGroup = isGroup;
+        if (!isGroup) {
+            this.groupName = null;
+        }
     }
 
     public boolean getGroup() {
@@ -43,15 +46,6 @@ public class Chat {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    public Message getLastMessage() {
-        return lastMessage;
     }
 
     public void setLastMessage(Message lastMessage) {
@@ -79,5 +73,17 @@ public class Chat {
 
     public Set<UserChat> getParticipants() {
         return Collections.unmodifiableSet(participants);
+    }
+
+    private void validateGroupChat() {
+        if (this.isGroup && (this.groupName == null || this.groupName.trim().isEmpty())) {
+            throw new IllegalArgumentException("Group Chat must have a name!");
+        }
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        validateGroupChat();
     }
 }

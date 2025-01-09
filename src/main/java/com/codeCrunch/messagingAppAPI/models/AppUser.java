@@ -52,6 +52,14 @@ public class AppUser implements UserDetails {
         ADMIN
     }
 
+    @PrePersist
+    public void setDefaults() {
+        if (this.role == null) {
+            this.role = Role.USER;
+        }
+        this.createdAt = LocalDateTime.now();
+    }
+
     public String getUsername() {
         return username;
     }
@@ -102,12 +110,6 @@ public class AppUser implements UserDetails {
 
     public Role getRole() {
         return role;
-    }
-
-    public void setDefaultRole() {
-        if (this.role == null) {
-            this.role = Role.USER;
-        }
     }
 
     public void setRole(Role role) {

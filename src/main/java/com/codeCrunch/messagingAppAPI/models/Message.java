@@ -20,12 +20,12 @@ public class Message {
     private AppUser sender;     // The user who sent this message
 
     @Column(nullable = false)
-    @Size(max = 1024)    // We'll limit single text content for now
+    @Size(max = 2048)    // We'll limit single text content for now
     private String content;
 
-    private String attachmentUrl;   // Optional text url of attachment media
-
-    private String attachmentType;  // What file type is the attachment
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "attachment_id", referencedColumnName = "id")
+    private Attachment attachment;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime timestamp;    // When message was sent
@@ -68,20 +68,12 @@ public class Message {
         this.content = content;
     }
 
-    public String getAttachmentUrl() {
-        return attachmentUrl;
+    public void setAttachment(Attachment attachment) {
+        this.attachment = attachment;
     }
 
-    public void setAttachmentUrl(String attachmentUrl) {
-        this.attachmentUrl = attachmentUrl;
-    }
-
-    public String getAttachmentType() {
-        return attachmentType;
-    }
-
-    public void setAttachmentType(String attachmentType) {
-        this.attachmentType = attachmentType;
+    public Attachment getAttachment() {
+        return attachment;
     }
 
     public MessageStatus getStatus() {

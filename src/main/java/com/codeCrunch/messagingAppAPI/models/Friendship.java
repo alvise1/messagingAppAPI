@@ -3,6 +3,7 @@ package com.codeCrunch.messagingAppAPI.models;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user1_id", "user2_id"}))
 @Entity
 public class Friendship {
 
