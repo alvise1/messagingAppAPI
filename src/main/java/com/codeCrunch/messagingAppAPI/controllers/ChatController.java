@@ -31,10 +31,8 @@ public class ChatController {
      */
     @PostMapping
     public ResponseEntity<ChatDTO> createChat(@RequestBody ChatDTO chatDTO) {
-        // Map DTO -> Entity
         Chat chatEntity = mapToEntity(chatDTO);
 
-        // Suppose we pass participant IDs in chatDTO.getParticipantIds().
         List<Long> participantIds = chatDTO.getParticipantIds() != null
                 ? new ArrayList<>(chatDTO.getParticipantIds()) : new ArrayList<>();
 
