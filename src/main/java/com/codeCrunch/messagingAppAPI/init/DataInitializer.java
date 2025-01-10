@@ -16,9 +16,8 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        String adminEmail = "<user>@gmail.com";
+        String adminEmail = "alvise.carpin@gmail.com";
 
-        // If no admin user exists with this email, create one
         if (!userService.adminExistsByEmail(adminEmail)) {
             AppUser adminUser = new AppUser();
             adminUser.setUsername("admin");
