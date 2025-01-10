@@ -1,6 +1,8 @@
 package com.codeCrunch.messagingAppAPI.controllers;
 
 import com.codeCrunch.messagingAppAPI.dto.MessageDTO;
+import com.codeCrunch.messagingAppAPI.models.AppUser;
+import com.codeCrunch.messagingAppAPI.models.Chat;
 import com.codeCrunch.messagingAppAPI.models.Message;
 import com.codeCrunch.messagingAppAPI.services.MessageService;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +25,8 @@ public class MessageController {
      */
     @PostMapping
     public ResponseEntity<MessageDTO> sendMessage(@RequestBody MessageDTO messageDTO) {
-        // Convert DTO -> Entity
         Message messageEntity = mapToEntity(messageDTO);
-
-        // Call service
         Message savedMessage = messageService.sendMessage(messageEntity);
-
-        // Convert Entity -> DTO
         MessageDTO resultDTO = mapToDTO(savedMessage);
         return ResponseEntity.ok(resultDTO);
     }
@@ -40,7 +37,6 @@ public class MessageController {
     @GetMapping("/{chatId}")
     public ResponseEntity<List<MessageDTO>> getMessagesByChatId(@PathVariable Long chatId) {
         List<Message> messages = messageService.getMessagesByChatId(chatId);
-        // Convert each Message -> MessageDTO
         List<MessageDTO> messageDTOs = messages.stream()
                 .map(this::mapToDTO)
                 .toList();
@@ -84,6 +80,7 @@ public class MessageController {
         }
         dto.setContent(message.getContent());
         dto.setStatus(message.getStatus().name());
+
         return dto;
     }
 
@@ -93,6 +90,15 @@ public class MessageController {
         message.setContent(dto.getContent());
         if (dto.getStatus() != null) {
             message.setStatus(Message.MessageStatus.valueOf(dto.getStatus()));
+        }
+        if (dto.getSenderId() != null) {
+            AppUser sender = new AppUser();
+            message.setSender(sender);
+        }
+
+        if (dto.getChatId() != null) {
+            Chat chat = new Chat();
+            message.setChat(chat);
         }
 
         return message;

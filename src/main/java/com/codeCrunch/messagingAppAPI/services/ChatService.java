@@ -18,6 +18,9 @@ public class ChatService {
     }
 
     public Chat createChat(Chat chat, List<Long> participantIds) {
+        if (participantIds == null || participantIds.isEmpty()) {
+            throw new IllegalArgumentException("A chat must have at least one participant.");
+        }
         Chat savedChat = chatRepository.save(chat);
 
         participantIds.forEach(userId -> {
